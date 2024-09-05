@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:zwuush}",
+            "name": "Debug zwuush",
+            "program": "${workspaceFolder:zwuush}/.build/debug/zwuush",
+            "preLaunchTask": "swift: Build Debug zwuush"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:zwuush}",
+            "name": "Release zwuush",
+            "program": "${workspaceFolder:zwuush}/.build/release/zwuush",
+            "preLaunchTask": "swift: Build Release zwuush"
+        }
+    ]
+}
