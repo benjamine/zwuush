@@ -3,22 +3,24 @@ import AVFoundation
 
 struct ZwuushApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    private let audioManager = AudioManager()
-    @StateObject private var soundPlayer = SoundPlayer()
-    @State private var contentView: AnyView = AnyView(ConfettiAnimation())  // Default to ConfettiAnimation
+    @StateObject private var audioManager = AudioManager()
+    @State private var contentView: AnyView = AnyView(EmptyAnimation())  // Default to ConfettiAnimation
 
     var body: some Scene {
         WindowGroup {
             contentView
                 .frame(width: NSScreen.main?.frame.width, height: NSScreen.main?.frame.height)
+                .edgesIgnoringSafeArea(.all)
                 .background(Color.clear)
-                .ignoresSafeArea()  
+                // .ignoresSafeArea()  
                 .onAppear {
                     let arguments = CommandLine.arguments
+                    
+                    let imagePath = parseImageFlag(arguments)
 
-                    let animationType = parseAnimationFlag(arguments)
+                    let animationType = imagePath != nil ? "image" : "empty"
                     // Set the content view based on the animation type
-                    self.contentView = selectAnimation(type: animationType)
+                    self.contentView = selectAnimation(type: animationType, imagePath: imagePath)
 
                     if let soundFilePath = parseSoundFlag(arguments) {
                         playSound(from: soundFilePath)
@@ -29,29 +31,20 @@ struct ZwuushApp: App {
                         }
                     }
                 }
+                .onTapGesture {
+                    print("exiting after click")
+                    NSApplication.shared.terminate(nil)
+                }
         }
         .windowStyle(HiddenTitleBarWindowStyle())
     }
 
-    private func parseAnimationFlag(_ arguments: [String]) -> String {
-        for (index, arg) in arguments.enumerated() {
-            if arg == "--animation", index + 1 < arguments.count {
-                return arguments[index + 1]
-            }
-        }
-        return "confetti"  // Default to confetti animation
-    }
-
-    private func selectAnimation(type: String) -> AnyView {
+    private func selectAnimation(type: String, imagePath: String?) -> AnyView {
         switch type {
-        case "confetti":
-            return AnyView(ConfettiAnimation())
-        case "petals":
-            return AnyView(PetalsAnimation())
-        //case "rain":
-        //    return AnyView(RainAnimation())
+        case "image":
+            return AnyView(ImageAnimation(imagePath: imagePath!))
         default:
-            return AnyView(ConfettiAnimation())
+            return AnyView(EmptyAnimation())
         }
     }
 
@@ -64,16 +57,18 @@ struct ZwuushApp: App {
         return nil
     }
 
-    private func playSound(from path: String) {
-        let fileManager = FileManager.default
-        let soundURL = URL(fileURLWithPath: path)
-        
-        if fileManager.fileExists(atPath: path) {
-            soundPlayer.playSound(from: soundURL) {
-                NSApplication.shared.terminate(nil)
+        private func parseImageFlag(_ arguments: [String]) -> String? {
+        for (index, arg) in arguments.enumerated() {
+            if arg == "--image", index + 1 < arguments.count {
+                return arguments[index + 1]
             }
-        } else {
-            print("sound file not found at path: \(path)")
+        }
+        return nil
+    }
+
+    private func playSound(from pathOrURL: String) {
+        audioManager.play(from: pathOrURL) {
+            // Terminate the app once sound has finished playing
             NSApplication.shared.terminate(nil)
         }
     }
@@ -87,24 +82,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             window.styleMask.insert(.fullSizeContentView)
             window.titlebarAppearsTransparent = true
             window.level = .floating // Ensure the window is on top
-        }
-    }
-}
-
-class SoundPlayer: ObservableObject {
-    private var audioPlayer: AVAudioPlayer?
-    
-    func playSound(from url: URL, completion: @escaping () -> Void) {
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            audioPlayer?.play()
-            // Wait until audio finishes
-            DispatchQueue.main.asyncAfter(deadline: .now() + audioPlayer!.duration) {
-                completion()
-            }
-        } catch {
-            print("Error playing sound: \(error)")
-            completion()
         }
     }
 }

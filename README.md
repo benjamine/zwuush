@@ -14,9 +14,12 @@
    git clone https://github.com/benjamine/zwuush.git
    cd zwuush
    swift build --configuration release
+```
 
-   .build/release/zwuush
+## Usage
 
-      .build/release/zwuush --sound path/to/sound.m4a
-
+``` bash
+   # --sound <path or url to audio file>, supports local path or url, wav/mp3/aac
+   # --image <path or url to image>, supports local path or url, supports animated GIF/APNG
+   .build/release/zwuush --sound https://upload.wikimedia.org/wikipedia/commons/d/da/Discovery_-_Computers_are_in_Control.mp3 --image https://upload.wikimedia.org/wikipedia/commons/d/d6/Cat_Laptop_-_Idil_Keysan_-_Wikimedia_Giphy_stickers_2019.gif
 ```
