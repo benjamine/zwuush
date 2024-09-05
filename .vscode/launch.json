@@ -23,6 +23,30 @@
             "name": "Release zwuush",
             "program": "${workspaceFolder:zwuush}/.build/release/zwuush",
             "preLaunchTask": "swift: Build Release zwuush"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:zwuush}",
+            "name": "Debug Zwuush",
+            "program": "${workspaceFolder:zwuush}/.build/debug/Zwuush",
+            "preLaunchTask": "swift: Build Debug Zwuush"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:zwuush}",
+            "name": "Release Zwuush",
+            "program": "${workspaceFolder:zwuush}/.build/release/Zwuush",
+            "preLaunchTask": "swift: Build Release Zwuush"
         }
     ]
 }

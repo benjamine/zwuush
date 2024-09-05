@@ -1,7 +1,7 @@
 import SwiftUI
 import AppKit
 
-struct ZwuushView: NSViewRepresentable {
+struct PetalsAnimation: NSViewRepresentable {
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
         view.wantsLayer = true
@@ -22,7 +22,7 @@ struct ZwuushView: NSViewRepresentable {
         particle.emissionRange = .pi * 2
         particle.spin = 2.0
         particle.spinRange = 1.0
-        particle.color = NSColor.red.cgColor
+        particle.color = NSColor.cyan.cgColor
         particle.contents = createZwuushImage()
         particle.scale = 0.2
         particle.scaleRange = 0.2
@@ -56,7 +56,7 @@ struct ZwuushView: NSViewRepresentable {
             bitmapInfo: bitmapInfo.rawValue
         ) else { return nil }
         
-        context.setFillColor(NSColor.red.cgColor) // Red color
+        context.setFillColor(NSColor.cyan.cgColor) // Red color
         context.fill(CGRect(origin: .zero, size: size))
         
         return context.makeImage()
@@ -68,6 +68,7 @@ struct ZwuushView: NSViewRepresentable {
     
     class Coordinator: NSObject {
         @objc func handleClick(_ sender: NSClickGestureRecognizer) {
+            print("exiting after click")
             NSApplication.shared.terminate(nil)
         }
     }
