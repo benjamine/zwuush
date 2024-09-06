@@ -14,7 +14,9 @@ brew install zwuush
 ## Usage
 
 ```bash
-   # specify a gif and optional audio file, or a video file (local path or remote url)
+   # use a video file (local path or remote url), transparency is supported
+   zwuush https://benjamine.github.io/zwuush/wow.mov
+   # or (animated) image (eg. gif), and (optional) audio
    zwuush https://upload.wikimedia.org/wikipedia/commons/d/da/Discovery_-_Computers_are_in_Control.mp3 https://upload.wikimedia.org/wikipedia/commons/d/d6/Cat_Laptop_-_Idil_Keysan_-_Wikimedia_Giphy_stickers_2019.gif
 ```
 
