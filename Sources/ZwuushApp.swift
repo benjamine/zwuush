@@ -14,20 +14,25 @@ struct ZwuushApp: App {
                 .background(Color.clear)
                 // .ignoresSafeArea()  
                 .onAppear {
-                    let arguments = CommandLine.arguments
+                    // let arguments = CommandLine.arguments
+
+                    let args = parseArguments(CommandLine.arguments);
+                    if (args.errorMessage != nil) {
+                        print(args.errorMessage!)
+                        exit(1)
+                    }
                     
-                    let imagePath = parseImageFlag(arguments)
-
-                    let animationType = imagePath != nil ? "image" : "empty"
                     // Set the content view based on the animation type
-                    self.contentView = selectAnimation(type: animationType, imagePath: imagePath)
+                    self.contentView = selectAnimation(args: args)
 
-                    if let soundFilePath = parseSoundFlag(arguments) {
-                        playSound(from: soundFilePath)
-                    } else {
-                        // No audio file specified; exit after the a fixed duration
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                            NSApplication.shared.terminate(nil)
+                    if (args.animationType != .video) {
+                        if (args.soundFile != nil) {
+                            playSound(from: args.soundFile!)
+                        } else {
+                            // No audio or video; exit after a fixed time delay
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                NSApplication.shared.terminate(nil)
+                            }
                         }
                     }
                 }
@@ -39,31 +44,15 @@ struct ZwuushApp: App {
         .windowStyle(HiddenTitleBarWindowStyle())
     }
 
-    private func selectAnimation(type: String, imagePath: String?) -> AnyView {
-        switch type {
-        case "image":
-            return AnyView(ImageAnimation(imagePath: imagePath!))
+    private func selectAnimation(args: ArgumentsResult) -> AnyView {
+        switch args.animationType {
+        case .image:
+            return AnyView(ImageAnimation(imagePath: args.mediaFile!))
+        case .video:
+            return AnyView(VideoAnimation(videoPath: args.mediaFile!))
         default:
             return AnyView(EmptyAnimation())
         }
-    }
-
-    private func parseSoundFlag(_ arguments: [String]) -> String? {
-        for (index, arg) in arguments.enumerated() {
-            if arg == "--sound", index + 1 < arguments.count {
-                return arguments[index + 1]
-            }
-        }
-        return nil
-    }
-
-        private func parseImageFlag(_ arguments: [String]) -> String? {
-        for (index, arg) in arguments.enumerated() {
-            if arg == "--image", index + 1 < arguments.count {
-                return arguments[index + 1]
-            }
-        }
-        return nil
     }
 
     private func playSound(from pathOrURL: String) {
